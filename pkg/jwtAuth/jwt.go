@@ -1,7 +1,9 @@
 package jwtAuth
 
 import (
+	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"merch-shop/pkg/config"
 	"time"
 )
 
@@ -14,8 +16,21 @@ func GenerateJWT(secretKey string, userID int) (string, error) {
 	return token.SignedString([]byte(secretKey))
 }
 
-func ParseJWT(secretKey, tokenString string) (*jwt.Token, error) {
-	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil
+func ParseJWT(tokenString string) (int, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("Unexpected signing method") //TODO Неавторизован.
+		}
+		return []byte(config.Cfg.SecretJWTKey), nil
 	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		userID := int(claims["user_id"].(float64))
+		return userID, nil
+	}
+	return 0, errors.New("Invalid token claims") //TODO Неавторизован.
 }

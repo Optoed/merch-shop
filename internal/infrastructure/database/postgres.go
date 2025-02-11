@@ -4,7 +4,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
-	"merch-shop/internal/config"
+	"merch-shop/pkg/config"
 )
 
 var DB *sqlx.DB

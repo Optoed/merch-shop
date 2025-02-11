@@ -3,8 +3,8 @@ package service
 import (
 	"database/sql"
 	"errors"
-	"merch-shop/internal/config"
 	"merch-shop/internal/repository"
+	"merch-shop/pkg/config"
 	"merch-shop/pkg/jwtAuth"
 	"merch-shop/pkg/utils"
 )
