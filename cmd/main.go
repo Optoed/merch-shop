@@ -19,10 +19,12 @@ func main() {
 
 	r.POST("/api/auth", handler.AuthHandler)
 
-	protectedAPI := r.Group("/api/")
+	protectedAPI := r.Group("/api")
 	protectedAPI.Use(middleware.JWTMiddleware())
 	{
-		// TODO: protectedAPI. ... допиши остальные роуты
+		protectedAPI.POST("/sendCoin")
+		protectedAPI.GET("/info")
+		protectedAPI.POST("/buy/:item")
 	}
 
 	if err := r.Run(":8080"); err != nil {

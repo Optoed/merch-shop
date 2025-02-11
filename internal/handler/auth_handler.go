@@ -2,13 +2,13 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"merch-shop/internal/models"
+	"merch-shop/internal/models/requestModels"
 	"merch-shop/internal/service"
 	"net/http"
 )
 
 func AuthHandler(c *gin.Context) {
-	var authRequest models.AuthRequest
+	var authRequest requestModels.AuthRequest
 	if err := c.ShouldBindJSON(&authRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"description": err.Error()})
 		return

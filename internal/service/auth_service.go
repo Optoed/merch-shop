@@ -22,7 +22,7 @@ func Authenticate(username, password string) (string, error) {
 		return "", errors.New("Неправильный логин или пароль") //TODO
 	}
 
-	return generateJWT(user.ID)
+	return generateJWT(user.ID, username)
 }
 
 func createUserAndGenerateJWT(username, password string) (string, error) {
@@ -30,11 +30,11 @@ func createUserAndGenerateJWT(username, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return generateJWT(userID)
+	return generateJWT(userID, username)
 }
 
-func generateJWT(userID int) (string, error) {
-	token, err := jwtAuth.GenerateJWT(config.Cfg.SecretJWTKey, userID)
+func generateJWT(userID int, username string) (string, error) {
+	token, err := jwtAuth.GenerateJWT(config.Cfg.SecretJWTKey, userID, username)
 	if err != nil {
 		return "", err
 	}

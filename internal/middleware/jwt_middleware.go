@@ -26,15 +26,15 @@ func JWTMiddleware() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		userID, err := jwtAuth.ParseJWT(tokenString)
+		userID, username, err := jwtAuth.ParseJWT(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": fmt.Sprintf("Invalid token: %v", err)}) //TODO Неавторизован.
 			c.Abort()
 			return
 		}
-		
-		c.Set("user_id", userID)
 
+		c.Set("user_id", userID)
+		c.Set("username", username)
 		c.Next()
 	}
 }

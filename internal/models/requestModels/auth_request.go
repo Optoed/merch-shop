@@ -1,4 +1,4 @@
-package models
+package requestModels
 
 type AuthRequest struct {
 	Username string `json:"username" binding:"required"`
