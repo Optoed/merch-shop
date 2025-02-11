@@ -2,16 +2,23 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"merch-shop/internal/infrastructure/config"
-	"merch-shop/internal/infrastructure/db"
+	"log"
+	"merch-shop/internal/config"
+	"merch-shop/internal/handler"
+	"merch-shop/internal/infrastructure/database"
 )
 
 func main() {
 	config.LoadEnv()
 
-	db.InitDB()
-	defer db.CloseDB()
+	database.InitDB()
+	defer database.CloseDB()
 
 	r := gin.Default()
-	r.Run("0.0.0.0:8080")
+
+	r.POST("/api/auth", handler.AuthHandler)
+
+	if err := r.Run(":8080"); err != nil {
+		log.Fatal("Ошибка при старте сервера:", err)
+	}
 }

@@ -18,5 +18,5 @@ CREATE TABLE inventory (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id),
     item_name VARCHAR(50) NOT NULL,
-    count INT
+    count INT DEFAULT 1
 );

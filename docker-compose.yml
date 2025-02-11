@@ -12,7 +12,7 @@ services:
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=merch_shop
-      - DATABASE_HOST=db
+      - DATABASE_HOST=database
       # порт сервиса
       - SERVER_PORT=8080
     depends_on:

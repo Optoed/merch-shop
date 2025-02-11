@@ -8,12 +8,13 @@ import (
 )
 
 type Config struct {
-	DBUser     string
-	DBPassword string
-	DBHost     string
-	DBPort     string
-	DBName     string
-	DBSSLMode  string
+	DBUser       string
+	DBPassword   string
+	DBHost       string
+	DBPort       string
+	DBName       string
+	DBSSLMode    string
+	SecretJWTKey string
 }
 
 var Cfg Config
@@ -25,15 +26,16 @@ func LoadEnv() {
 	}
 
 	Cfg = Config{
-		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "postgres"),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBName:     getEnv("DB_NAME", "merch_shop"),
-		DBSSLMode:  getEnv("DB_SSLMODE", "disable"),
+		DBUser:       getEnv("DB_USER", "postgres"),
+		DBPassword:   getEnv("DB_PASSWORD", "postgres"),
+		DBHost:       getEnv("DB_HOST", "localhost"),
+		DBPort:       getEnv("DB_PORT", "5432"),
+		DBName:       getEnv("DB_NAME", "merch_shop"),
+		DBSSLMode:    getEnv("DB_SSLMODE", "disable"),
+		SecretJWTKey: getEnv("SECRET_JWT_KEY", "secret-jwt-key"),
 	}
 
-	log.Println("✅ Env successfully loaded")
+	log.Println("Env successfully loaded")
 }
 
 func GetDBUrl() string {
