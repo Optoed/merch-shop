@@ -11,7 +11,7 @@ services:
       - DATABASE_PORT=5432
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=shop
+      - DATABASE_NAME=merch_shop
       - DATABASE_HOST=db
       # порт сервиса
       - SERVER_PORT=8080
@@ -26,8 +26,8 @@ services:
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: shop
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: merch_shop
     volumes:
       # "./migrations/init.sql" - путь к миграциям БД
       - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql

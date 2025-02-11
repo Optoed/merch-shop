@@ -21,7 +21,7 @@ var Cfg Config
 func LoadEnv() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println("⚠️  Warning: No .env file found. Using system environment variables.")
+		log.Println("Warning: No .env file found. Using system environment variables.")
 	}
 
 	Cfg = Config{
