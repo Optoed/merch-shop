@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
+    receiver_name VARCHAR(50),
     amount INT NOT NULL,
     timestamp TIMESTAMP DEFAULT NOW()
 );

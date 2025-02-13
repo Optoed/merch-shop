@@ -22,7 +22,7 @@ func main() {
 	protectedAPI := r.Group("/api")
 	protectedAPI.Use(middleware.JWTMiddleware())
 	{
-		protectedAPI.POST("/sendCoin")
+		protectedAPI.POST("/sendCoin", handler.SendCoinHandler)
 		protectedAPI.GET("/info")
 		protectedAPI.POST("/buy/:item")
 	}

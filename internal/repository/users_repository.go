@@ -37,3 +37,13 @@ func GetUserByUsername(username string) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func GetBalanceByID(userID int) (int, error) {
+	query := `SELECT balance FROM users WHERE id=$1`
+	var balance int
+	err := database.DB.Get(&balance, query, userID)
+	if err != nil {
+		return 0, nil
+	}
+	return balance, nil
+}
