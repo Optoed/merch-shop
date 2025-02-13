@@ -2,11 +2,9 @@ package repository
 
 import "errors"
 
-type Items struct {
-	dict map[string]int
-}
+type ItemsMap map[string]int
 
-var Store Items = Items{dict: map[string]int{
+var Store = ItemsMap{
 	"t-shirt":    80,
 	"cup":        20,
 	"book":       50,
@@ -17,10 +15,10 @@ var Store Items = Items{dict: map[string]int{
 	"socks":      10,
 	"wallet":     50,
 	"pink-hoody": 500,
-}}
+}
 
-func (items *Items) GetCostByName(name string) (int, error) {
-	if cost, exists := items.dict[name]; !exists {
+func (items ItemsMap) GetCostByName(name string) (int, error) {
+	if cost, exists := items[name]; !exists {
 		return 0, errors.New("Товара с таким названием не существует")
 	} else {
 		return cost, nil
