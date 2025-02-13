@@ -43,12 +43,12 @@ func SendCoin(senderID int, receiverName string, amount int) error {
 	//	return errors.New("Нельзя поделиться монетами с самим же собой")
 	//}
 
-	err = repository.UpdateBalanceTx(tx, senderID, -amount)
+	err = repository.DecreaseBalanceByAmountTx(tx, senderID, amount)
 	if err != nil {
 		return err
 	}
 
-	err = repository.UpdateBalanceTx(tx, receiver.ID, +amount)
+	err = repository.IncreaseBalanceByAmountTx(tx, receiver.ID, amount)
 	if err != nil {
 		return err
 	}

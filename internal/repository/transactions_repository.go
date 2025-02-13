@@ -4,8 +4,14 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-func UpdateBalanceTx(tx *sqlx.Tx, userID, amount int) error {
+func IncreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
 	query := `UPDATE users SET balance=balance+$1 WHERE id=$2`
+	_, err := tx.Exec(query, amount, userID)
+	return err
+}
+
+func DecreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
+	query := `UPDATE users SET balance=balance-$1 WHERE id=$2`
 	_, err := tx.Exec(query, amount, userID)
 	return err
 }

@@ -24,7 +24,7 @@ func main() {
 	{
 		protectedAPI.POST("/sendCoin", handler.SendCoinHandler)
 		protectedAPI.GET("/info")
-		protectedAPI.POST("/buy/:item")
+		protectedAPI.POST("/buy/:item", handler.BuyItem)
 	}
 
 	if err := r.Run(":8080"); err != nil {
