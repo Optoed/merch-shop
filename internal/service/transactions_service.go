@@ -8,6 +8,10 @@ import (
 )
 
 func SendCoin(senderID int, receiverName string, amount int) error {
+	if amount <= 0 {
+		return errors.New("Количество отправляемых монет должно быть положительным!")
+	}
+
 	tx, err := database.DB.Beginx()
 	if err != nil {
 		log.Printf("Ошибка при начале транзакции: %v", err)
