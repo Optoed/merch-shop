@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/jmoiron/sqlx"
 	"log"
 	"merch-shop/internal/infrastructure/database"
 	"merch-shop/internal/models"
@@ -46,4 +47,16 @@ func GetUserBalanceByID(userID int) (int, error) {
 		return 0, nil
 	}
 	return balance, nil
+}
+
+func IncreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
+	query := `UPDATE users SET balance=balance+$1 WHERE id=$2`
+	_, err := tx.Exec(query, amount, userID)
+	return err
+}
+
+func DecreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
+	query := `UPDATE users SET balance=balance-$1 WHERE id=$2`
+	_, err := tx.Exec(query, amount, userID)
+	return err
 }

@@ -41,18 +41,18 @@ func BuyItem(userID int, itemName string) error {
 		return err
 	}
 
-	exists, err := repository.CheckHaveItemInInventory(tx, userID, itemName)
+	exists, err := repository.CheckHaveItemInInventoryTx(tx, userID, itemName)
 	if err != nil {
 		return err
 	}
 
 	if !exists {
-		err = repository.AddItemToInventory(tx, userID, itemName, 1)
+		err = repository.AddItemToInventoryTx(tx, userID, itemName, 1)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = repository.UpdateInventoryItem(tx, userID, itemName, 1)
+		err = repository.UpdateInventoryItemTx(tx, userID, itemName, 1)
 		if err != nil {
 			return err
 		}

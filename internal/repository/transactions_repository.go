@@ -1,20 +1,12 @@
 package repository
 
 import (
+	"database/sql"
+	"errors"
 	"github.com/jmoiron/sqlx"
+	"merch-shop/internal/infrastructure/database"
+	"merch-shop/internal/models"
 )
-
-func IncreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
-	query := `UPDATE users SET balance=balance+$1 WHERE id=$2`
-	_, err := tx.Exec(query, amount, userID)
-	return err
-}
-
-func DecreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
-	query := `UPDATE users SET balance=balance-$1 WHERE id=$2`
-	_, err := tx.Exec(query, amount, userID)
-	return err
-}
 
 func CreateTransactionTx(tx *sqlx.Tx,
 	senderID, receiverID int, receiverName string, amount int) error {
@@ -22,4 +14,28 @@ func CreateTransactionTx(tx *sqlx.Tx,
 			  VALUES ($1, $2, $3, $4)`
 	_, err := tx.Exec(query, senderID, receiverID, receiverName, amount)
 	return err
+}
+
+func GetTransactionsFromUser(userID int) ([]models.Transaction, error) {
+	var transactionsFromUser []models.Transaction
+	query := `SELECT * FROM transactions WHERE sender_id=$1`
+
+	err := database.DB.Select(&transactionsFromUser, query, userID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return transactionsFromUser, nil
+}
+
+func GetTransactionsToUser(userID int) ([]models.Transaction, error) {
+	var transactionsToUser []models.Transaction
+	query := `SELECT * FROM transactions WHERE receiver_id=$1`
+
+	err := database.DB.Select(&transactionsToUser, query, userID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+
+	return transactionsToUser, nil
 }

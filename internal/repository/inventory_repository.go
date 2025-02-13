@@ -5,21 +5,22 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"merch-shop/internal/infrastructure/database"
 	"merch-shop/internal/models"
 )
 
-func GetUserInventory(tx *sqlx.Tx, userID int) ([]models.InventoryItem, error) {
+func GetUserInventory(userID int) ([]models.InventoryItem, error) {
 	query := `SELECT * FROM inventory WHERE user_id=$1`
 	var inventory []models.InventoryItem
-	err := tx.Select(&inventory, query, userID)
-	if err != nil {
+	err := database.DB.Select(&inventory, query, userID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Printf("Ошибка при получении инвентаря пользователя: %v", err)
 		return nil, err
 	}
 	return inventory, nil
 }
 
-func CheckHaveItemInInventory(tx *sqlx.Tx, userID int, itemName string) (bool, error) {
+func CheckHaveItemInInventoryTx(tx *sqlx.Tx, userID int, itemName string) (bool, error) {
 	query := `SELECT 1 FROM inventory WHERE user_id=$1 AND item_name=$2 LIMIT 1`
 	var exists bool
 	err := tx.Get(&exists, query, userID, itemName)
@@ -29,7 +30,7 @@ func CheckHaveItemInInventory(tx *sqlx.Tx, userID int, itemName string) (bool, e
 	return exists, nil
 }
 
-func AddItemToInventory(tx *sqlx.Tx, userID int, itemName string, count int) error {
+func AddItemToInventoryTx(tx *sqlx.Tx, userID int, itemName string, count int) error {
 	query := `INSERT INTO inventory (user_id, item_name, count) VALUES ($1, $2, $3)`
 	_, err := tx.Exec(query, userID, itemName, count)
 	if err != nil {
@@ -39,7 +40,7 @@ func AddItemToInventory(tx *sqlx.Tx, userID int, itemName string, count int) err
 	return nil
 }
 
-func UpdateInventoryItem(tx *sqlx.Tx, userID int, itemName string, count int) error {
+func UpdateInventoryItemTx(tx *sqlx.Tx, userID int, itemName string, count int) error {
 	query := `UPDATE inventory SET count = count + $1 WHERE user_id = $2 AND item_name = $3`
 	_, err := tx.Exec(query, count, userID, itemName)
 	if err != nil {

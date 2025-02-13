@@ -8,5 +8,5 @@ type Transaction struct {
 	ReceiverID   int       `json:"receiver_id" db:"receiver_id"`
 	ReceiverName string    `json:"receiver_name" db:"receiver_name"`
 	Amount       int       `json:"amount" db:"amount"`
-	Timestamp    time.Time `json:"timestamp" db:"timestamp"`
+	Timestamp    time.Time `json:"timestamp" db:"timestamp"` //TODO Нужен ли?
 }
