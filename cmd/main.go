@@ -12,7 +12,7 @@ import (
 func main() {
 	config.LoadEnv()
 
-	database.InitDB()
+	database.InitDB(false) // не тестовая бд
 	defer database.CloseDB()
 
 	r := gin.Default()

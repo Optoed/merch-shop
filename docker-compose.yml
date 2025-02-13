@@ -37,6 +37,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: merch_shop
+      POSTGRES_DB_TEST: merch_shop_test
     volumes:
       # "./migrations/init.sql" - путь к миграциям БД
       # - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
