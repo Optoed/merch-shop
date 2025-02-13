@@ -1,6 +1,6 @@
 package models
 
-type Inventory struct {
+type InventoryItem struct {
 	ID       int    `json:"id" db:"id"`
 	UserID   int    `json:"user_id" db:"user_id"`
 	ItemName string `json:"item_name" db:"item_name"`

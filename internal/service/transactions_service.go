@@ -22,7 +22,7 @@ func SendCoin(senderID int, receiverName string, amount int) error {
 		}
 	}()
 
-	senderBalance, err := repository.GetBalanceByID(senderID)
+	senderBalance, err := repository.GetUserBalanceByID(senderID)
 	//log.Printf("senderID = %d, senderBalance = %d, error = %v",
 	//	senderID, senderBalance, err)
 	if err != nil {
@@ -39,9 +39,9 @@ func SendCoin(senderID int, receiverName string, amount int) error {
 	}
 
 	//TODO нужно ли?
-	//if senderID == receiver.ID {
-	//	return errors.New("Нельзя поделиться монетами с самим же собой")
-	//}
+	if senderID == receiver.ID {
+		return errors.New("Нельзя поделиться монетами с самим же собой")
+	}
 
 	err = repository.DecreaseBalanceByAmountTx(tx, senderID, amount)
 	if err != nil {
