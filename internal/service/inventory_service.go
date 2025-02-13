@@ -41,21 +41,22 @@ func BuyItem(userID int, itemName string) error {
 		return err
 	}
 
-	//TODO - допиши
-	//
-	_, err = repository.GetUserInventory(userID)
+	exists, err := repository.CheckHaveItemInInventory(tx, userID, itemName)
 	if err != nil {
-		err = repository.AddItemToInventory(userID, itemName, 1)
+		return err
+	}
+
+	if !exists {
+		err = repository.AddItemToInventory(tx, userID, itemName, 1)
 		if err != nil {
 			return err
 		}
 	} else {
-		err = repository.UpdateInventoryItem(userID, itemName, 1)
+		err = repository.UpdateInventoryItem(tx, userID, itemName, 1)
 		if err != nil {
 			return err
 		}
 	}
-	//
 
 	if err = tx.Commit(); err != nil {
 		log.Printf("Ошибка при коммите транзакции: %v", err)
