@@ -30,7 +30,7 @@ func LoadEnv() {
 		DBPassword:   getEnv("DB_PASSWORD", "postgres"),
 		DBHost:       getEnv("DB_HOST", "localhost"),
 		DBPort:       getEnv("DB_PORT", "5432"),
-		DBName:       getEnv("DB_NAME", "merch_shop"),
+		DBName:       getEnv("DB_NAME", "merch_shop"), //TODO merch_shop
 		DBSSLMode:    getEnv("DB_SSLMODE", "disable"),
 		SecretJWTKey: getEnv("SECRET_JWT_KEY", "secret-jwt-key"),
 	}
