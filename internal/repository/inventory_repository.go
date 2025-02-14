@@ -30,6 +30,16 @@ func CheckHaveItemInInventoryTx(tx *sqlx.Tx, userID int, itemName string) (bool,
 	return exists, nil
 }
 
+func CheckHaveItemInInventory(userID int, itemName string) (bool, error) {
+	query := `SELECT 1 FROM inventory WHERE user_id=$1 AND item_name=$2 LIMIT 1`
+	var exists bool
+	err := database.DB.Get(&exists, query, userID, itemName)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return false, err
+	}
+	return exists, nil
+}
+
 func AddItemToInventoryTx(tx *sqlx.Tx, userID int, itemName string, count int) error {
 	query := `INSERT INTO inventory (user_id, item_name, count) VALUES ($1, $2, $3)`
 	_, err := tx.Exec(query, userID, itemName, count)

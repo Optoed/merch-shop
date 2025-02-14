@@ -9,8 +9,8 @@ import (
 	"merch-shop/internal/infrastructure/database"
 	"merch-shop/internal/models/requestModels"
 	"merch-shop/pkg/config"
+	"merch-shop/test"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestAuthHandler(t *testing.T) {
 
 	defer func() {
 		database.ClearDB()
-		database.CloseDB()
+		//database.CloseDB()
 	}()
 
 	// Инициализация маршрутов
@@ -40,7 +40,7 @@ func TestAuthHandler(t *testing.T) {
 		req := bytes.NewReader(requestBody)
 
 		// Выполняем запрос
-		w := performRequest(router, "POST", "/api/auth", req)
+		w := test.PerformRequest(router, "POST", "/api/auth", req)
 
 		// Проверяем успешный ответ
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -59,7 +59,7 @@ func TestAuthHandler(t *testing.T) {
 		req := bytes.NewReader(requestBody)
 
 		// Выполняем запрос
-		w := performRequest(router, "POST", "/api/auth", req)
+		w := test.PerformRequest(router, "POST", "/api/auth", req)
 
 		// Проверяем, что вернулся статус 401
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
@@ -67,12 +67,4 @@ func TestAuthHandler(t *testing.T) {
 		json.Unmarshal(w.Body.Bytes(), &response)
 		assert.Contains(t, response, "description")
 	})
-}
-
-// performRequest - вспомогательная функция для выполнения HTTP запроса
-func performRequest(router *gin.Engine, method, path string, body *bytes.Reader) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest(method, path, body)
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-	return w
 }

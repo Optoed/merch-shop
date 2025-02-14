@@ -60,3 +60,9 @@ func DecreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
 	_, err := tx.Exec(query, amount, userID)
 	return err
 }
+
+func SetUserBalance(userID, amount int) error {
+	query := `UPDATE users SET balance=$1 WHERE id=$2`
+	_, err := database.DB.Exec(query, amount, userID)
+	return err
+}
