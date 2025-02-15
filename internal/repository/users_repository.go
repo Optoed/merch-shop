@@ -39,6 +39,16 @@ func GetUserByUsername(username string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetUserByID(userID int) (*models.User, error) {
+	query := `SELECT * FROM users WHERE id=$1`
+	var user models.User
+	err := database.DB.Get(&user, query, userID)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func GetUserBalanceByID(userID int) (int, error) {
 	query := `SELECT balance FROM users WHERE id=$1`
 	var balance int

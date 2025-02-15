@@ -24,8 +24,9 @@ func TestBuyItemHandler(t *testing.T) {
 
 	defer func() {
 		database.ClearDB()
-		//database.CloseDB()
 	}()
+
+	gin.SetMode(gin.TestMode)
 
 	// Инициализация маршрутов
 	router := gin.Default()

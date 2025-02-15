@@ -26,6 +26,8 @@ func TestAuthHandler(t *testing.T) {
 		//database.CloseDB()
 	}()
 
+	gin.SetMode(gin.TestMode)
+
 	// Инициализация маршрутов
 	router := gin.Default()
 	router.POST("/api/auth", handler.AuthHandler)
