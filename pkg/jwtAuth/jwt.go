@@ -20,7 +20,7 @@ func GenerateJWT(secretKey string, userID int, username string) (string, error) 
 func ParseJWT(tokenString string) (int, string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("Unexpected signing method") //TODO Неавторизован.
+			return nil, errors.New("Неавторизован.")
 		}
 		return []byte(config.Cfg.SecretJWTKey), nil
 	})
@@ -34,5 +34,5 @@ func ParseJWT(tokenString string) (int, string, error) {
 		username := claims["username"].(string)
 		return userID, username, nil
 	}
-	return 0, "", errors.New("Invalid token claims") //TODO Неавторизован.
+	return 0, "", errors.New("Неавторизован.")
 }
