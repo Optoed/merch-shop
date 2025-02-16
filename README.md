@@ -1,5 +1,5 @@
 # merch-shop
-Backend (Go + Postgres + Redis) for the Merch Shop + tests
+Backend (Go + Postgres) for the Merch Shop + tests
 
 ## Описание задачи
 
