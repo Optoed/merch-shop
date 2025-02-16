@@ -22,7 +22,7 @@ func CreateTransactionTx(
 	return err
 }
 
-func GetTransactionsFromUser(userID int) ([]models.TransactionFrom, error) {
+var GetTransactionsFromUser = func(userID int) ([]models.TransactionFrom, error) {
 	var transactionsFromUser []models.TransactionFrom
 	query := `SELECT sender_name, amount FROM transactions WHERE receiver_id=$1`
 
@@ -34,7 +34,7 @@ func GetTransactionsFromUser(userID int) ([]models.TransactionFrom, error) {
 	return transactionsFromUser, nil
 }
 
-func GetTransactionsToUser(userID int) ([]models.TransactionTo, error) {
+var GetTransactionsToUser = func(userID int) ([]models.TransactionTo, error) {
 	var transactionsToUser []models.TransactionTo
 	query := `SELECT receiver_name, amount FROM transactions WHERE sender_id=$1`
 

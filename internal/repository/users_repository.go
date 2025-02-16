@@ -47,7 +47,7 @@ func GetUserByID(userID int) (*models.User, error) {
 	return &user, nil
 }
 
-func GetUserBalanceByID(userID int) (int, error) {
+var GetUserBalanceByID = func(userID int) (int, error) {
 	query := `SELECT balance FROM users WHERE id=$1`
 	var balance int
 	err := database.DB.Get(&balance, query, userID)

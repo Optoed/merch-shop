@@ -9,7 +9,7 @@ import (
 	"merch-shop/internal/models"
 )
 
-func GetUserInventory(userID int) ([]models.InventoryItemResponse, error) {
+var GetUserInventory = func(userID int) ([]models.InventoryItemResponse, error) {
 	query := `SELECT item_name, count FROM inventory WHERE user_id=$1`
 	var inventory []models.InventoryItemResponse
 	err := database.DB.Select(&inventory, query, userID)
