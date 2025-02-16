@@ -17,7 +17,7 @@ func GenerateJWT(secretKey string, userID int, username string) (string, error) 
 	return token.SignedString([]byte(secretKey))
 }
 
-func ParseJWT(tokenString string) (int, string, error) {
+var ParseJWT = func(tokenString string) (int, string, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("Неавторизован.")
