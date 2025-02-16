@@ -62,7 +62,7 @@ API будет доступно по адресу http://localhost:8080.
 
 [Протестировать можно в Postman]
 
-Регистрация / авторизация:
+### Регистрация / авторизация:
 
 Метод: POST
 
@@ -76,6 +76,107 @@ URL: /api/auth
     "password": "123"
 }
 ```
+Ответ:
+```json
+{
+    "description": "Успешная аутентификация.",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mzk4MjA0MjksInVzZXJfaWQiOjEsInVzZXJuYW1lIjoib3B0b2VkIn0.bBusn2R11h4QR5w0A9HEXDkCzmhotSlGrh3BmEhqzyQ"
+}
+```
+
+### Покупка мерча
+
+Метод: POST
+
+URL: /api/buy/:item
+
+Authorization: Bearer Token
+
+Пример:
+```json
+http://localhost:8080/api/buy/cup
+```
+
+```
+Ответ:
+```json
+{
+    "description": "Успешный ответ."
+}
+```
+
+### Отправка монет
+
+Метод: POST
+
+URL: /api/sendCoin
+
+Authorization: Bearer Token
+
+Тело запроса:
+```json
+{
+  "toUser" : "user2",
+  "amount" : 100
+}
+```
+
+Ответ:
+```json
+{
+    "description": "Успешный ответ."
+}
+```
+
+### Получение информации
+
+Метод: GET
+
+URL: /api/info
+
+Authorization: Bearer Token
+
+Ответ:
+```json
+{
+  "description": "Успешный ответ.",
+  "schema": {
+    "coinHistory": {
+      "received": [
+        {
+          "fromUser": "optoed2",
+          "amount": 101
+        }
+      ],
+      "sent": [
+        {
+          "toUser": "optoed2",
+          "amount": 10
+        },
+        {
+          "toUser": "optoed1",
+          "amount": 12
+        },
+        {
+          "toUser": "optoed1",
+          "amount": 357
+        }
+      ]
+    },
+    "coins": 1332,
+    "inventory": [
+      {
+        "type": "cup",
+        "quantity": 4
+      },
+      {
+        "type": "pen",
+        "quantity": 1
+      }
+    ]
+  }
+}
+```
 
 
 ## Пояснения
@@ -85,6 +186,8 @@ URL: /api/auth
     - всего 10 товаров, их состояние не изменяется
     - map работает гораздо быстрее Postgres и даже Redis
     - гораздо более простая логика, меньше накладок на систему
+
+2) Для ускорения чтения данных из таблиц базы данных были применены hash_index.
 
 3) Аутентификация включила в себя и регистрацию (если указанный пользователь не существует в бд) и логин (если существует). Сразу же выдается jwt token.
 4) Было проведено тестирование - представлено в виде unit- и интеграционных тестов.
