@@ -1,46 +1,38 @@
 version: '3.8'
 
-#DBUser:       getEnv("DB_USER", "postgres"),
-#		DBPassword:   getEnv("DB_PASSWORD", "postgres"),
-#		DBHost:       getEnv("DB_HOST", "localhost"),
-#		DBPort:       getEnv("DB_PORT", "5432"),
-#		DBName:       getEnv("DB_NAME", "merch_shop"),
-#		DBSSLMode:    getEnv("DB_SSLMODE", "disable"),
-#		SecretJWTKey: getEnv("SECRET_JWT_KEY", "secret-jwt-key")
-
 services:
-#  avito-shop-service:
-#    build: .
-#    container_name: avito-shop-service
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      # енвы подключения к БД
-#      - DATABASE_PORT=5432
-#      - DATABASE_USER=postgres
-#      - DATABASE_PASSWORD=postgres
-#      - DATABASE_NAME=merch_shop
-#      - DATABASE_HOST=database
-#      - DATABASE_SSLMODE=disable
-#      # порт сервиса
-#      - SERVER_PORT=8080
-#    depends_on:
-#      db:
-#        condition: service_healthy
-#    networks:
-#      - internal
+  avito-shop-service:
+    build: .
+    container_name: avito-shop-service
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_PORT=5432
+      - DB_CONTAINER_PORT=5435
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=merch_shop
+      - DB_HOST=database
+      - DB_SSLMODE=disable
+      - SERVER_PORT=
+      - DB_TEST_NAME=merch_shop_test
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - internal
 
-  db:
+  database:
     image: postgres:13
-    container_name: postgres
+    container_name: database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: merch_shop
       POSTGRES_DB_TEST: merch_shop_test
     volumes:
-      # "./migrations/init.sql" - путь к миграциям БД
-      # - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5435:5432"
