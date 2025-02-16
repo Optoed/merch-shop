@@ -1,6 +1,6 @@
 package requestModels
 
 type SendCoinRequest struct {
-	ReceiverName string `json:"receiver_name"`
-	Amount       int    `json:"amount"`
+	ReceiverName string `json:"toUser" binding:"required"`
+	Amount       int    `json:"amount" binding:"required"`
 }

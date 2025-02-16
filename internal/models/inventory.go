@@ -6,3 +6,8 @@ type InventoryItem struct {
 	ItemName string `json:"item_name" db:"item_name"`
 	Count    int    `json:"count" db:"count"`
 }
+
+type InventoryItemResponse struct {
+	Type     string `json:"type" db:"item_name"`
+	Quantity int    `json:"quantity" db:"count"`
+}

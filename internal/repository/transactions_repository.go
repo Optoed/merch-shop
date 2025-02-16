@@ -8,17 +8,23 @@ import (
 	"merch-shop/internal/models"
 )
 
-func CreateTransactionTx(tx *sqlx.Tx,
-	senderID, receiverID int, receiverName string, amount int) error {
-	query := `INSERT INTO transactions (sender_id, receiver_id, receiver_name, amount) 
-			  VALUES ($1, $2, $3, $4)`
-	_, err := tx.Exec(query, senderID, receiverID, receiverName, amount)
+func CreateTransactionTx(
+	tx *sqlx.Tx,
+	senderID int,
+	senderName string,
+	receiverID int,
+	receiverName string,
+	amount int) error {
+
+	query := `INSERT INTO transactions (sender_id, sender_name, receiver_id, receiver_name, amount) 
+			  VALUES ($1, $2, $3, $4, $5)`
+	_, err := tx.Exec(query, senderID, senderName, receiverID, receiverName, amount)
 	return err
 }
 
-func GetTransactionsFromUser(userID int) ([]models.Transaction, error) {
-	var transactionsFromUser []models.Transaction
-	query := `SELECT * FROM transactions WHERE sender_id=$1`
+func GetTransactionsFromUser(userID int) ([]models.TransactionFrom, error) {
+	var transactionsFromUser []models.TransactionFrom
+	query := `SELECT sender_name, amount FROM transactions WHERE receiver_id=$1`
 
 	err := database.DB.Select(&transactionsFromUser, query, userID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -28,9 +34,9 @@ func GetTransactionsFromUser(userID int) ([]models.Transaction, error) {
 	return transactionsFromUser, nil
 }
 
-func GetTransactionsToUser(userID int) ([]models.Transaction, error) {
-	var transactionsToUser []models.Transaction
-	query := `SELECT * FROM transactions WHERE receiver_id=$1`
+func GetTransactionsToUser(userID int) ([]models.TransactionTo, error) {
+	var transactionsToUser []models.TransactionTo
+	query := `SELECT receiver_name, amount FROM transactions WHERE sender_id=$1`
 
 	err := database.DB.Select(&transactionsToUser, query, userID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {

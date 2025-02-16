@@ -8,13 +8,15 @@ import (
 )
 
 type Config struct {
-	DBUser       string
-	DBPassword   string
-	DBHost       string
-	DBPort       string
-	DBName       string
-	DBSSLMode    string
-	SecretJWTKey string
+	DBUser          string
+	DBPassword      string
+	DBHost          string
+	DBPort          string
+	DBContainerPort string
+	DBName          string
+	DBTestName      string // для тестов
+	DBSSLMode       string
+	SecretJWTKey    string
 }
 
 var Cfg Config
@@ -26,20 +28,26 @@ func LoadEnv() {
 	}
 
 	Cfg = Config{
-		DBUser:       getEnv("DB_USER", "postgres"),
-		DBPassword:   getEnv("DB_PASSWORD", "postgres"),
-		DBHost:       getEnv("DB_HOST", "localhost"),
-		DBPort:       getEnv("DB_PORT", "5432"),
-		DBName:       getEnv("DB_NAME", "merch_shop"), //TODO merch_shop
-		DBSSLMode:    getEnv("DB_SSLMODE", "disable"),
-		SecretJWTKey: getEnv("SECRET_JWT_KEY", "secret-jwt-key"),
+		DBUser:          getEnv("DB_USER", "postgres"),
+		DBPassword:      getEnv("DB_PASSWORD", "postgres"),
+		DBHost:          getEnv("DB_HOST", "localhost"),
+		DBPort:          getEnv("DB_PORT", "5432"),
+		DBContainerPort: getEnv("DB_CONTAINER_PORT", "5435"),
+		DBName:          getEnv("DB_NAME", "merch_shop"),
+		DBTestName:      getEnv("DB_TEST_NAME", "merch_shop_test"),
+		DBSSLMode:       getEnv("DB_SSLMODE", "disable"),
+		SecretJWTKey:    getEnv("SECRET_JWT_KEY", "secret-jwt-key"),
 	}
 
 	log.Println("Env successfully loaded")
 }
 
-func GetDBUrl() string {
-	return "postgres://" + Cfg.DBUser + ":" + Cfg.DBPassword + "@" + Cfg.DBHost + ":" + Cfg.DBPort + "/" + Cfg.DBName + "?sslmode=" + Cfg.DBSSLMode
+func GetDBUrl(isTest bool) string {
+	dbName := Cfg.DBName
+	if isTest {
+		dbName = Cfg.DBTestName
+	}
+	return "postgres://" + Cfg.DBUser + ":" + Cfg.DBPassword + "@" + Cfg.DBHost + ":" + Cfg.DBPort + "/" + dbName + "?sslmode=" + Cfg.DBSSLMode
 }
 
 func getEnv(key, defaultValue string) string {

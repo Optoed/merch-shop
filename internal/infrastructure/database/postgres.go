@@ -9,8 +9,8 @@ import (
 
 var DB *sqlx.DB
 
-func InitDB() {
-	DbUrl := config.GetDBUrl()
+func InitDB(isTest bool) {
+	DbUrl := config.GetDBUrl(isTest) // Используем флаг для тестовой базы
 	var err error
 
 	DB, err = sqlx.Connect("postgres", DbUrl)
@@ -30,5 +30,25 @@ func CloseDB() {
 	if DB != nil {
 		DB.Close()
 		log.Println("Database connection close")
+	}
+}
+
+func ClearDB() {
+	if DB != nil {
+		// Учитывай порядок!
+		tables := []string{
+			"transactions",
+			"inventory",
+			"users",
+		}
+
+		for _, table := range tables {
+			_, err := DB.Exec("DELETE FROM" + " " + table)
+			if err != nil {
+				log.Printf("Ошибка при очистке таблицы %s: %v", table, err)
+			} else {
+				log.Printf("Таблица %s успешно очищена", table)
+			}
+		}
 	}
 }

@@ -24,7 +24,7 @@ func CreateUser(username, password string, balance int) (int, error) {
 		log.Printf("Ошибка при создании пользователя: %v", err)
 		return -1, err
 	}
-	log.Println("Пользователь успешно создан")
+	//log.Println("Пользователь успешно создан")
 	return userID, nil
 }
 
@@ -32,7 +32,16 @@ func GetUserByUsername(username string) (*models.User, error) {
 	query := `SELECT * FROM users WHERE username=$1`
 	var user models.User
 	err := database.DB.Get(&user, query, username)
-	//log.Println("user GetUserByUsername = ", user, "error = ", err)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func GetUserByID(userID int) (*models.User, error) {
+	query := `SELECT * FROM users WHERE id=$1`
+	var user models.User
+	err := database.DB.Get(&user, query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -58,5 +67,11 @@ func IncreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
 func DecreaseBalanceByAmountTx(tx *sqlx.Tx, userID, amount int) error {
 	query := `UPDATE users SET balance=balance-$1 WHERE id=$2`
 	_, err := tx.Exec(query, amount, userID)
+	return err
+}
+
+func SetUserBalance(userID, amount int) error {
+	query := `UPDATE users SET balance=$1 WHERE id=$2`
+	_, err := database.DB.Exec(query, amount, userID)
 	return err
 }

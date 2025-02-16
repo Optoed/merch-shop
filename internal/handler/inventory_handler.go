@@ -11,7 +11,7 @@ func BuyItem(c *gin.Context) {
 
 	userID, exists := c.Get("user_id")
 	if !exists {
-		c.JSON(http.StatusBadRequest, gin.H{"description": "Неверный запрос"}) //TODO
+		c.JSON(http.StatusBadRequest, gin.H{"description": "Неверный запрос"})
 		return
 	}
 
@@ -21,5 +21,5 @@ func BuyItem(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"description": "Товар успешно куплен"})
+	c.JSON(http.StatusOK, gin.H{"description": "Успешный ответ."})
 }
