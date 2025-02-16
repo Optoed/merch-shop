@@ -9,7 +9,6 @@ import (
 	"merch-shop/internal/infrastructure/database"
 	"merch-shop/internal/models/requestModels"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"testing"
 )
@@ -23,7 +22,6 @@ func TestAuthHandler(t *testing.T) {
 
 	defer func() {
 		database.ClearDB()
-		//database.CloseDB()
 	}()
 
 	gin.SetMode(gin.TestMode)
@@ -42,7 +40,7 @@ func TestAuthHandler(t *testing.T) {
 		req := bytes.NewReader(requestBody)
 
 		// Выполняем запрос
-		w := test.PerformRequest(router, "POST", "/api/auth", req)
+		w := PerformRequest(router, "POST", "/api/auth", req)
 
 		// Проверяем успешный ответ
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -61,7 +59,7 @@ func TestAuthHandler(t *testing.T) {
 		req := bytes.NewReader(requestBody)
 
 		// Выполняем запрос
-		w := test.PerformRequest(router, "POST", "/api/auth", req)
+		w := PerformRequest(router, "POST", "/api/auth", req)
 
 		// Проверяем, что вернулся статус 401
 		assert.Equal(t, http.StatusUnauthorized, w.Code)

@@ -11,7 +11,6 @@ import (
 	"merch-shop/internal/middleware"
 	"merch-shop/internal/repository"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -44,27 +43,32 @@ func TestGetUserInfo(t *testing.T) {
 	testUsername := "testuser"
 	testPassword := "testpassword"
 
+	testUsername2 := "anotherUser"
+	testPassword2 := "anotherPassword"
+
 	// Создаем тестового пользователя
 	userID, err := repository.CreateUser(testUsername, testPassword, 1000)
 	assert.NoError(t, err)
 
-	anotherUserID, _ := repository.CreateUser("anotherUser", "anotherPassword", 1000)
+	userID2, _ := repository.CreateUser(testUsername2, testPassword2, 1000)
 
 	// Авторизуем пользователя
-	token := test.AuthenticateUser(t, router, testUsername, testPassword)
+	token := AuthenticateUser(t, router, testUsername, testPassword)
 
 	// Тест на получение информации о пользователе
 	t.Run("Success - Get user info", func(t *testing.T) {
 
+		item := "cup"
+
 		// Добавим в инвентарь 1 предмет "cup"
 		query := `INSERT INTO inventory (user_id, item_name, count) VALUES ($1, $2, $3)`
-		_, err := database.DB.Exec(query, userID, "cup", 1)
+		_, err := database.DB.Exec(query, userID, item, 1)
 		assert.NoError(t, err)
 
 		// Добавим 1 транзакцию
-		query = `INSERT INTO transactions (sender_id, receiver_id, receiver_name, amount) 
-			  VALUES ($1, $2, $3, $4)`
-		_, err = database.DB.Exec(query, userID, anotherUserID, "anotherUser", 50)
+		query = `INSERT INTO transactions (sender_id, sender_name, receiver_id, receiver_name, amount) 
+			  VALUES ($1, $2, $3, $4, $5)`
+		_, err = database.DB.Exec(query, userID, testUsername, userID2, testUsername2, 50)
 		assert.NoError(t, err)
 
 		// Выполняем запрос на получение информации
@@ -86,45 +90,29 @@ func TestGetUserInfo(t *testing.T) {
 
 		// Проверяем что в ответе правильное описание
 		assert.Equal(t, "Успешный ответ.", response["description"])
-		assert.Equal(t, 1000, int(response["schema"].(map[string]interface{})["coins"].(float64)))
 
 		// Проверяем, что в ответе есть инвентарь и транзакции
 		schema := response["schema"].(map[string]interface{})
 		inventory := schema["inventory"].([]interface{})
 		coinHistory := schema["coinHistory"].(map[string]interface{})
+		coins := schema["coins"]
+
+		assert.Equal(t, float64(1000), coins)
 
 		// Проверяем, что инвентарь не пустой и содержит предмет "cup"
 		assert.NotEmpty(t, inventory)
-		assert.Equal(t, "cup", inventory[0].(map[string]interface{})["item_name"])
-		assert.Equal(t, float64(1), inventory[0].(map[string]interface{})["count"])
+		assert.Equal(t, "cup", inventory[0].(map[string]interface{})["type"].(string))
+		assert.Equal(t, float64(1), inventory[0].(map[string]interface{})["quantity"])
 
-		// Проверяем, что транзакции не пустые
-		received := coinHistory["received"].([]interface{})
+		//// Проверяем, что транзакции не пустые
+		received := coinHistory["received"]
+		assert.Equal(t, nil, received)
+
 		sent := coinHistory["sent"].([]interface{})
-		assert.NotEmpty(t, received)
 		assert.NotEmpty(t, sent)
 
 		// Проверяем, что транзакция имеет правильные значения
-		assert.Equal(t, 50.0, received[0].(map[string]interface{})["amount"])
-		assert.Equal(t, "anotherUser", received[0].(map[string]interface{})["sender_name"])
 		assert.Equal(t, 50.0, sent[0].(map[string]interface{})["amount"])
-		assert.Equal(t, "anotherUser", sent[0].(map[string]interface{})["receiver_name"])
+		assert.Equal(t, testUsername2, sent[0].(map[string]interface{})["toUser"])
 	})
-
-	//t.Run("Failure - Get user info without token", func(t *testing.T) {
-	//	// Выполняем запрос без авторизации
-	//	getUserInfoReq, _ := http.NewRequest("GET", "/api/info", nil)
-	//	getUserInfoW := httptest.NewRecorder()
-	//
-	//	// Выполняем запрос через сервер
-	//	router.ServeHTTP(getUserInfoW, getUserInfoReq)
-	//
-	//	// Проверяем, что вернулся статус 401 (не авторизован)
-	//	assert.Equal(t, http.StatusUnauthorized, getUserInfoW.Code)
-	//
-	//	// Проверяем, что в ответе есть описание ошибки
-	//	var response map[string]interface{}
-	//	json.Unmarshal(getUserInfoW.Body.Bytes(), &response)
-	//	assert.Contains(t, response, "description")
-	//})
 }

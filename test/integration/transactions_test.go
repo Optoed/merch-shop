@@ -10,7 +10,6 @@ import (
 	"merch-shop/internal/middleware"
 	"merch-shop/internal/repository"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,13 +53,13 @@ func TestSendCoinHandler(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Авторизация пользователей
-	senderToken := test.AuthenticateUser(t, router, senderUsername, senderPassword)
+	senderToken := AuthenticateUser(t, router, senderUsername, senderPassword)
 
 	t.Run("Success - Transfer coins from sender to receiver", func(t *testing.T) {
 		// Подготовка запроса на перевод монет
 		sendCoinRequest := map[string]interface{}{
-			"receiver_name": "receiver",
-			"amount":        50,
+			"toUser": "receiver",
+			"amount": 50,
 		}
 
 		sendCoinRequestBody, _ := json.Marshal(sendCoinRequest)
@@ -86,9 +85,9 @@ func TestSendCoinHandler(t *testing.T) {
 		assert.Equal(t, 1050, receiver.Balance) // 1000 + 50 = 1050
 
 		// Проверяем, что транзакция была записана
-		transactions, err := repository.GetTransactionsFromUser(senderUserID)
+		transactions, err := repository.GetTransactionsToUser(senderUserID)
 		assert.NoError(t, err)
-		assert.Equal(t, senderUserID, transactions[0].SenderName)
+		assert.Equal(t, receiverUsername, transactions[0].ReceiverName)
 		assert.Equal(t, 50, transactions[0].Amount)
 	})
 
