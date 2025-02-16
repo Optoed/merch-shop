@@ -3,7 +3,9 @@ package unit
 import (
 	"bytes"
 	"fmt"
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"github.com/stretchr/testify/assert"
 	"merch-shop/internal/handler"
 	"merch-shop/internal/service"
@@ -11,6 +13,15 @@ import (
 	"net/http/httptest"
 	"testing"
 )
+
+func setupMockDB() (*sqlx.DB, sqlmock.Sqlmock) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		panic(err)
+	}
+	sqlxDB := sqlx.NewDb(db, "sqlmock")
+	return sqlxDB, mock
+}
 
 func mockSendCoin(senderID int, senderName, receiverName string, amount int) error {
 	if receiverName == "invalidUser" {

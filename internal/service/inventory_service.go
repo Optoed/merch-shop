@@ -7,7 +7,7 @@ import (
 	"merch-shop/internal/repository"
 )
 
-func BuyItem(userID int, itemName string) error {
+var BuyItem = func(userID int, itemName string) error {
 	cost, err := repository.Store.GetCostByName(itemName)
 	if err != nil {
 		return errors.New("Неверный запрос.")
