@@ -93,11 +93,10 @@ URL: /api/buy/:item
 Authorization: Bearer Token
 
 Пример:
-```json
+```
 http://localhost:8080/api/buy/cup
 ```
 
-```
 Ответ:
 ```json
 {
