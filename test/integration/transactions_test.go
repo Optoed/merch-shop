@@ -10,7 +10,6 @@ import (
 	"merch-shop/internal/middleware"
 	"merch-shop/internal/repository"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,7 +53,7 @@ func TestSendCoinHandler(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Авторизация пользователей
-	senderToken := test.AuthenticateUser(t, router, senderUsername, senderPassword)
+	senderToken := AuthenticateUser(t, router, senderUsername, senderPassword)
 
 	t.Run("Success - Transfer coins from sender to receiver", func(t *testing.T) {
 		// Подготовка запроса на перевод монет

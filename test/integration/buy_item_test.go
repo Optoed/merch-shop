@@ -10,7 +10,6 @@ import (
 	"merch-shop/internal/middleware"
 	"merch-shop/internal/repository"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"testing"
 )
@@ -44,7 +43,7 @@ func TestBuyItemHandler(t *testing.T) {
 	userID, err := repository.CreateUser(testUsername, testPassword, 1000)
 	assert.NoError(t, err)
 
-	token := test.AuthenticateUser(t, router, testUsername, testPassword)
+	token := AuthenticateUser(t, router, testUsername, testPassword)
 	//log.Printf("token = %s\n", token)
 
 	t.Run("Success - Buy item with sufficient balance", func(t *testing.T) {
@@ -58,7 +57,7 @@ func TestBuyItemHandler(t *testing.T) {
 
 		requestBody, _ := json.Marshal(itemName)
 		req := bytes.NewReader(requestBody)
-		w := test.PerformAuthenticatedRequest(router, "POST", "/api/buy/"+itemName, req, token)
+		w := PerformAuthenticatedRequest(router, "POST", "/api/buy/"+itemName, req, token)
 
 		// Проверяем успешный ответ
 		assert.Equal(t, http.StatusOK, w.Code)
@@ -89,7 +88,7 @@ func TestBuyItemHandler(t *testing.T) {
 		// Выполняем запрос на покупку товара
 		requestBody, _ := json.Marshal(itemName)
 		req := bytes.NewReader(requestBody)
-		w := test.PerformAuthenticatedRequest(router, "POST", "/api/buy/"+itemName, req, token)
+		w := PerformAuthenticatedRequest(router, "POST", "/api/buy/"+itemName, req, token)
 
 		// Проверяем, что вернулся статус 400
 		assert.Equal(t, http.StatusBadRequest, w.Code)

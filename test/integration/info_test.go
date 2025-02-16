@@ -11,7 +11,6 @@ import (
 	"merch-shop/internal/middleware"
 	"merch-shop/internal/repository"
 	"merch-shop/pkg/config"
-	"merch-shop/test"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -54,7 +53,7 @@ func TestGetUserInfo(t *testing.T) {
 	userID2, _ := repository.CreateUser(testUsername2, testPassword2, 1000)
 
 	// Авторизуем пользователя
-	token := test.AuthenticateUser(t, router, testUsername, testPassword)
+	token := AuthenticateUser(t, router, testUsername, testPassword)
 
 	// Тест на получение информации о пользователе
 	t.Run("Success - Get user info", func(t *testing.T) {

@@ -24,7 +24,6 @@ func CreateUser(username, password string, balance int) (int, error) {
 		log.Printf("Ошибка при создании пользователя: %v", err)
 		return -1, err
 	}
-	//log.Println("Пользователь успешно создан")
 	return userID, nil
 }
 

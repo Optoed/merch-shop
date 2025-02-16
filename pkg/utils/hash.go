@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func CheckPasswordHash(password, passwordHash string) bool {
+var CheckPasswordHash = func(password, passwordHash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(passwordHash), []byte(password))
 	return err == nil
 }
