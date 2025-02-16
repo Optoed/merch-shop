@@ -88,8 +88,7 @@ func TestSendCoinHandler(t *testing.T) {
 		// Проверяем, что транзакция была записана
 		transactions, err := repository.GetTransactionsFromUser(senderUserID)
 		assert.NoError(t, err)
-		assert.Equal(t, senderUserID, transactions[0].SenderID)
-		assert.Equal(t, receiverUsername, transactions[0].ReceiverName)
+		assert.Equal(t, senderUserID, transactions[0].SenderName)
 		assert.Equal(t, 50, transactions[0].Amount)
 	})
 

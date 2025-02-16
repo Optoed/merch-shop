@@ -7,15 +7,15 @@ import (
 	"merch-shop/internal/repository"
 )
 
-func SendCoin(senderID int, receiverName string, amount int) error {
+func SendCoin(senderID int, senderName string, receiverName string, amount int) error {
 	if amount <= 0 {
-		return errors.New("Количество отправляемых монет должно быть положительным!")
+		return errors.New("Неверный запрос.") // Количество отправляемых монет должно быть положительным!
 	}
 
 	tx, err := database.DB.Beginx()
 	if err != nil {
 		log.Printf("Ошибка при начале транзакции: %v", err)
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
 	defer func() {
@@ -27,44 +27,41 @@ func SendCoin(senderID int, receiverName string, amount int) error {
 	}()
 
 	senderBalance, err := repository.GetUserBalanceByID(senderID)
-	//log.Printf("senderID = %d, senderBalance = %d, error = %v",
-	//	senderID, senderBalance, err)
 	if err != nil {
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
 	if senderBalance < amount {
-		return errors.New("Недостаточно монет на счете")
+		return errors.New("Неверный запрос.") //Недостаточно монет на счете
 	}
 
 	receiver, err := repository.GetUserByUsername(receiverName)
 	if err != nil {
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
-	//TODO нужно ли?
 	if senderID == receiver.ID {
-		return errors.New("Нельзя поделиться монетами с самим же собой")
+		return errors.New("Неверный запрос.") //Нельзя поделиться монетами с самим же собой
 	}
 
 	err = repository.DecreaseBalanceByAmountTx(tx, senderID, amount)
 	if err != nil {
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
 	err = repository.IncreaseBalanceByAmountTx(tx, receiver.ID, amount)
 	if err != nil {
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
-	err = repository.CreateTransactionTx(tx, senderID, receiver.ID, receiverName, amount)
+	err = repository.CreateTransactionTx(tx, senderID, senderName, receiver.ID, receiverName, amount)
 	if err != nil {
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
 	if err = tx.Commit(); err != nil {
 		log.Printf("Ошибка при коммите транзакции: %v", err)
-		return err
+		return errors.New("Внутренняя ошибка сервера.")
 	}
 
 	return nil

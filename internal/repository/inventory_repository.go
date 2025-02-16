@@ -9,9 +9,9 @@ import (
 	"merch-shop/internal/models"
 )
 
-func GetUserInventory(userID int) ([]models.InventoryItem, error) {
-	query := `SELECT * FROM inventory WHERE user_id=$1`
-	var inventory []models.InventoryItem
+func GetUserInventory(userID int) ([]models.InventoryItemResponse, error) {
+	query := `SELECT item_name, count FROM inventory WHERE user_id=$1`
+	var inventory []models.InventoryItemResponse
 	err := database.DB.Select(&inventory, query, userID)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Printf("Ошибка при получении инвентаря пользователя: %v", err)

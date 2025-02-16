@@ -10,7 +10,7 @@ import (
 func AuthHandler(c *gin.Context) {
 	var authRequest requestModels.AuthRequest
 	if err := c.ShouldBindJSON(&authRequest); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"description": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"description": "Неверный запрос."})
 		return
 	}
 
@@ -20,5 +20,8 @@ func AuthHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"description": "Успешная аутентификация.", "token": token})
+	c.JSON(http.StatusOK, gin.H{
+		"description": "Успешная аутентификация.",
+		"token":       token},
+	)
 }
