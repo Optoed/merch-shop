@@ -55,6 +55,34 @@ func TestSendCoinHandler(t *testing.T) {
 	// Авторизация пользователей
 	senderToken := AuthenticateUser(t, router, senderUsername, senderPassword)
 
+	t.Run("Failure - Insufficient balance", func(t *testing.T) {
+		// Подготовим запрос, чтобы отправитель не мог перевести больше монет, чем у него есть
+		sendCoinRequest := map[string]interface{}{
+			"receiver_name": "receiver",
+			"amount":        2000, // Попытка перевести 2000 монет, а у отправителя всего 1000
+		}
+		sendCoinRequestBody, _ := json.Marshal(sendCoinRequest)
+		sendCoinReq, _ := http.NewRequest("POST", "/api/sendCoin", bytes.NewBuffer(sendCoinRequestBody))
+		sendCoinReq.Header.Set("Authorization", "Bearer "+senderToken)
+		sendCoinW := httptest.NewRecorder()
+
+		// Выполняем запрос на перевод монет
+		router.ServeHTTP(sendCoinW, sendCoinReq)
+
+		// Проверяем статус код
+		assert.Equal(t, http.StatusBadRequest, sendCoinW.Code)
+
+		// Проверяем, что у отправителя и получателя монеты не изменились
+		sender, err := repository.GetUserByID(senderUserID)
+		assert.NoError(t, err)
+		receiver, err := repository.GetUserByID(receiverUserID)
+		assert.NoError(t, err)
+
+		// Убедимся, что баланс отправителя и получателя не изменился
+		assert.Equal(t, 1000, sender.Balance)
+		assert.Equal(t, 1000, receiver.Balance)
+	})
+
 	t.Run("Success - Transfer coins from sender to receiver", func(t *testing.T) {
 		// Подготовка запроса на перевод монет
 		sendCoinRequest := map[string]interface{}{
@@ -91,31 +119,4 @@ func TestSendCoinHandler(t *testing.T) {
 		assert.Equal(t, 50, transactions[0].Amount)
 	})
 
-	t.Run("Failure - Insufficient balance", func(t *testing.T) {
-		// Подготовим запрос, чтобы отправитель не мог перевести больше монет, чем у него есть
-		sendCoinRequest := map[string]interface{}{
-			"receiver_name": "receiver",
-			"amount":        2000, // Попытка перевести 2000 монет, а у отправителя всего 1000
-		}
-		sendCoinRequestBody, _ := json.Marshal(sendCoinRequest)
-		sendCoinReq, _ := http.NewRequest("POST", "/api/sendCoin", bytes.NewBuffer(sendCoinRequestBody))
-		sendCoinReq.Header.Set("Authorization", "Bearer "+senderToken)
-		sendCoinW := httptest.NewRecorder()
-
-		// Выполняем запрос на перевод монет
-		router.ServeHTTP(sendCoinW, sendCoinReq)
-
-		// Проверяем статус код
-		assert.Equal(t, http.StatusBadRequest, sendCoinW.Code)
-
-		// Проверяем, что у отправителя и получателя монеты не изменились
-		sender, err := repository.GetUserByID(senderUserID)
-		assert.NoError(t, err)
-		receiver, err := repository.GetUserByID(receiverUserID)
-		assert.NoError(t, err)
-
-		// Убедимся, что баланс отправителя и получателя не изменился
-		assert.Equal(t, 1000, sender.Balance)
-		assert.Equal(t, 1000, receiver.Balance)
-	})
 }
