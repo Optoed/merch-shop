@@ -7,7 +7,7 @@ import (
 	"merch-shop/internal/repository"
 )
 
-func SendCoin(senderID int, senderName string, receiverName string, amount int) error {
+var SendCoin = func(senderID int, senderName string, receiverName string, amount int) error {
 	if amount <= 0 {
 		return errors.New("Неверный запрос.") // Количество отправляемых монет должно быть положительным!
 	}
