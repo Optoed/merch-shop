@@ -64,7 +64,7 @@ func TestBuyItemHandler(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 		var response map[string]string
 		json.Unmarshal(w.Body.Bytes(), &response)
-		assert.Equal(t, "Товар успешно куплен", response["description"])
+		assert.Equal(t, "Успешный ответ.", response["description"])
 
 		// Проверяем, что баланс пользователя уменьшился
 		userBalance, err := repository.GetUserBalanceByID(userID)
